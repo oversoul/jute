@@ -100,6 +100,11 @@ void jValue::add_property(string key, jValue v) {
 void jValue::add_element(jValue v) {
   arr.push_back(v);
 }
+
+void jValue::insert_element(jValue v, int index) {
+  arr.insert(arr.begin() + index, v);
+}
+
 void jValue::set_string(string s) {
   svalue = s;
 }
@@ -148,6 +153,32 @@ jValue jValue::operator[](int i) {
 jValue jValue::operator[](string s) {
   if (mpindex.find(s) == mpindex.end()) return jValue();
   return properties[mpindex[s]].second;
+}
+
+void jValue::remove(int i) {
+  if (type == JARRAY) {
+    arr.erase(arr.begin() + i);
+    return;
+  }
+  if (type == JOBJECT) {
+    properties.erase(properties.begin() + i);
+    return;
+  }
+}
+
+jValue* jValue::get(int i) {
+  if (type == JARRAY) {
+    return &(arr[i]);
+  }
+  if (type == JOBJECT) {
+    return &(properties[i].second);
+  }
+  return nullptr;
+}
+
+jValue* jValue::get(std::string s) {
+  if (mpindex.find(s) == mpindex.end()) return nullptr;
+  return &(properties[mpindex[s]].second);
 }
 
 struct parser::token {
